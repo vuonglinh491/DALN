@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use App\Models\Document;
+use App\Models\User;
+use App\Policies\DocumentPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -13,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Document::class => DocumentPolicy::class,
     ];
 
     /**
@@ -25,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        // Cổng quản trị: kiểm tra ở server, không chỉ ẩn nút giao diện
+        Gate::define('admin', fn (User $user) => $user->is_active && $user->isAdmin());
     }
 }
